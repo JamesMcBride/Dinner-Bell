@@ -180,13 +180,13 @@ MAKE_SYSTEM_PROP_IOS4(AUTODETECT_CALENDAR,UIDataDetectorTypeCalendarEvent,UIData
 
 -(void)setBackgroundColor:(id)color
 {
-	TiRootViewController *controller = [[TiApp app] controller];
+	UIViewController<TiRootController> *controller = [[TiApp app] controller];
 	[controller setBackgroundColor:[Webcolor webColorNamed:color]];
 }
 
 -(void)setBackgroundImage:(id)image
 {
-	TiRootViewController *controller = [[TiApp app] controller];
+	UIViewController<TiRootController> *controller = [[TiApp app] controller];
 	UIImage *resultImage = [[ImageLoader sharedLoader] loadImmediateStretchableImage:[TiUtils toURL:image proxy:self]];
 	if (resultImage==nil && [image isEqualToString:@"Default.png"])
 	{

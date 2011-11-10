@@ -34,10 +34,8 @@
   FBDialog2* _loginDialog;
   FBDialog2* _fbDialog;
   NSString* _appId;
-  NSString* _urlSchemeSuffix;
   NSArray* _permissions;
   BOOL appSupportsBackgrounding;
-	BOOL forceDialog;
 }
 
 @property(nonatomic, copy) NSString* accessToken;
@@ -45,45 +43,36 @@
 @property(nonatomic, copy) NSDate* expirationDate;
 
 @property(nonatomic, assign) id<FBSessionDelegate2> sessionDelegate;
-@property(nonatomic, copy) NSString* urlSchemeSuffix;
 
-//Properties added to restore older functionality in the new facebook API:
-//We can now add appIds after the fact, and force a dialog to open
-@property(nonatomic, copy) NSString* appId;
-@property(nonatomic, assign) BOOL forceDialog;
 
-- (id)initWithAppId:(NSString *)appId
-        andDelegate:(id<FBSessionDelegate2>)delegate;
-
-- (id)initWithAppId:(NSString *)appId
-    urlSchemeSuffix:(NSString *)urlSchemeSuffix
-        andDelegate:(id<FBSessionDelegate2>)delegate;
-
-- (void)authorize:(NSArray *)permissions;
+- (void)authorize:(NSString *)application_id
+      permissions:(NSArray *)permissions
+      forceDialog:(BOOL)forceDialog
+         delegate:(id<FBSessionDelegate2>)delegate;
 
 - (BOOL)handleOpenURL:(NSURL *)url;
 
 - (void)logout:(id<FBSessionDelegate2>)delegate;
 
-- (FBRequest2*)requestWithParams:(NSMutableDictionary *)params
-                    andDelegate:(id <FBRequestDelegate2>)delegate;
+- (void)requestWithParams:(NSMutableDictionary *)params
+              andDelegate:(id <FBRequestDelegate2>)delegate;
 
-- (FBRequest2*)requestWithMethodName:(NSString *)methodName
-                          andParams:(NSMutableDictionary *)params
-                      andHttpMethod:(NSString *)httpMethod
-                        andDelegate:(id <FBRequestDelegate2>)delegate;
+- (void)requestWithMethodName:(NSString *)methodName
+                    andParams:(NSMutableDictionary *)params
+                andHttpMethod:(NSString *)httpMethod
+                  andDelegate:(id <FBRequestDelegate2>)delegate;
 
-- (FBRequest2*)requestWithGraphPath:(NSString *)graphPath
-                       andDelegate:(id <FBRequestDelegate2>)delegate;
+- (void)requestWithGraphPath:(NSString *)graphPath
+                 andDelegate:(id <FBRequestDelegate2>)delegate;
 
-- (FBRequest2*)requestWithGraphPath:(NSString *)graphPath
-                         andParams:(NSMutableDictionary *)params
-                       andDelegate:(id <FBRequestDelegate2>)delegate;
+- (void)requestWithGraphPath:(NSString *)graphPath
+                   andParams:(NSMutableDictionary *)params
+                 andDelegate:(id <FBRequestDelegate2>)delegate;
 
-- (FBRequest2*)requestWithGraphPath:(NSString *)graphPath
-                         andParams:(NSMutableDictionary *)params
-                     andHttpMethod:(NSString *)httpMethod
-                       andDelegate:(id <FBRequestDelegate2>)delegate;
+- (void)requestWithGraphPath:(NSString *)graphPath
+                   andParams:(NSMutableDictionary *)params
+               andHttpMethod:(NSString *)httpMethod
+                 andDelegate:(id <FBRequestDelegate2>)delegate;
 
 - (void)dialog:(NSString *)action
    andDelegate:(id<FBDialogDelegate2>)delegate;
@@ -96,10 +85,10 @@
 
 @end
 
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
- * Your application should implement this delegate to receive session callbacks.
+/*
+ *Your application should implement this delegate
  */
 @protocol FBSessionDelegate2 <NSObject>
 

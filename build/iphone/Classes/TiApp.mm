@@ -18,7 +18,7 @@
 #import "TiDebugger.h"
 #import <QuartzCore/QuartzCore.h>
 #import <AVFoundation/AVFoundation.h>
-#import "ApplicationDefaults.h"
+
 #import <libkern/OSAtomic.h>
 
 TiApp* sharedApp;
@@ -88,10 +88,6 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	insideException=NO;
 }
 
-@interface TiApp()
--(void)checkBackgroundServices;
-@end
-
 @implementation TiApp
 
 @synthesize window, remoteNotificationDelegate, controller;
@@ -101,7 +97,7 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	return sharedApp;
 }
 
-+(TiRootViewController*)controller;
++(UIViewController<TiRootController>*)controller;
 {
 	return [sharedApp controller];
 }
@@ -148,6 +144,118 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	return launchOptions;
 }
 
+- (UIImage*)loadAppropriateSplash
+{
+	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+	
+	UIImage* image = nil;
+
+	if([TiUtils isIPad])
+	{
+		// Specific orientation check
+		switch (orientation) {
+			case UIDeviceOrientationPortrait:
+				image = [UIImage imageNamed:@"Default-Portrait.png"];
+				break;
+			case UIDeviceOrientationPortraitUpsideDown:
+				image = [UIImage imageNamed:@"Default-PortraitUpsideDown.png"];
+				break;
+			case UIDeviceOrientationLandscapeLeft:
+				image = [UIImage imageNamed:@"Default-LandscapeLeft.png"];
+				break;
+			case UIDeviceOrientationLandscapeRight:
+				image = [UIImage imageNamed:@"Default-LandscapeRight.png"];
+				break;
+		}
+		if (image != nil) {
+			return image;
+		}
+			
+		// Generic orientation check
+		if (UIDeviceOrientationIsPortrait(orientation)) {
+			image = [UIImage imageNamed:@"Default-Portrait.png"];
+		}
+		else if (UIDeviceOrientationIsLandscape(orientation)) {
+			image = [UIImage imageNamed:@"Default-Landscape.png"];
+		}
+			
+		if (image != nil) {
+			return image;
+		}
+	}
+	
+	// Default 
+	return [UIImage imageNamed:@"Default.png"];
+}
+
+- (UIView*)attachSplash
+{
+	UIView * controllerView = [controller view];
+	
+	RELEASE_TO_NIL(loadView);
+
+	CGRect destRect;
+
+	if([TiUtils isIPad]) //iPad, 1024*748 or 748*1004, under the status bar.
+	{
+		destRect = [controllerView bounds];
+	}
+	else //iPhone: 320*480, placing behind the statusBar.
+	{
+		destRect = [controllerView convertRect:[[UIScreen mainScreen] bounds] fromView:nil];
+		destRect.origin.y -= [[UIApplication sharedApplication] statusBarFrame].size.height;
+	}
+
+	loadView = [[UIImageView alloc] initWithFrame:destRect];
+	[loadView setContentMode:UIViewContentModeScaleAspectFill];
+	loadView.image = [self loadAppropriateSplash];
+	[controller.view addSubview:loadView];
+	splashAttached = YES;
+	return loadView;
+}
+
+- (void)loadSplash
+{
+	sharedApp = self;
+	
+	// attach our main view controller... IF we haven't already loaded the main window.
+	if (!loaded) {
+		[self attachSplash];
+	}
+	if ([window respondsToSelector:@selector(setRootViewController:)]) {
+		[window setRootViewController:controller];
+	}
+	else
+	{
+		[window addSubview:[controller view]];
+	}
+    [window makeKeyAndVisible];
+}
+
+- (BOOL)isSplashVisible
+{
+	return splashAttached;
+}
+
+-(UIView*)splash
+{
+	return loadView;
+}
+
+- (void)hideSplash:(id)event
+{
+	// this is called when the first window is loaded
+	// and should only be done once (obviously) - the
+	// caller is responsible for setting up the animation
+	// context before calling this and committing it afterwards
+	if (loadView!=nil && splashAttached)
+	{
+		splashAttached = NO;
+		loaded = YES;
+		[loadView removeFromSuperview];
+		RELEASE_TO_NIL(loadView);
+	}
+}
 
 -(void)initController
 {
@@ -156,15 +264,12 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	// attach our main view controller
 	controller = [[TiRootViewController alloc] init];
 	
-	if([window respondsToSelector:@selector(setRootViewController:)])
-	{
-		[window setRootViewController:controller];		
+	// Force view load
+	controller.view.backgroundColor = [UIColor clearColor];
+	
+	if (![TiUtils isiPhoneOS3_2OrGreater]) {
+		[self loadSplash];
 	}
-	else
-	{
-		[window addSubview:[controller view]];
-	}
-    [window makeKeyAndVisible];
 }
 
 -(void)attachXHRBridgeIfRequired
@@ -177,21 +282,10 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	}
 #endif
 }
-//To load application Defaults 
-- (void) loadUserDefaults
-{
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSDictionary *appDefaults = [[NSDictionary alloc] initWithDictionary:[ApplicationDefaults copyDefaults]];
-	if(appDefaults)
-	{
-		[defaults registerDefaults:appDefaults];
-	}
-	[appDefaults release];
-}
 
 - (void)boot
 {
-	NSLog(@"[INFO] %@/%@ (%s.ab20af7)",TI_APPLICATION_NAME,TI_APPLICATION_VERSION,TI_VERSION_STR);
+	NSLog(@"[INFO] %@/%@ (%s.dcf4257)",TI_APPLICATION_NAME,TI_APPLICATION_VERSION,TI_VERSION_STR);
 	
 	sessionId = [[TiUtils createUUID] retain];
 	TITANIUM_VERSION = [[NSString stringWithCString:TI_VERSION_STR encoding:NSUTF8StringEncoding] retain];
@@ -238,7 +332,6 @@ void MyUncaughtExceptionHandler(NSException *exception)
 {
 	NSSetUncaughtExceptionHandler(&MyUncaughtExceptionHandler);
 	[self initController];
-	[self loadUserDefaults];
 	[self boot];
 }
 
@@ -297,7 +390,7 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	{
 		[self generateNotification:notification];
 	}
-	[self loadUserDefaults];
+	
 	[self boot];
 	
 	return YES;
@@ -602,8 +695,8 @@ void MyUncaughtExceptionHandler(NSException *exception)
 		UIDevice *currentDevice = [UIDevice currentDevice];
 		NSString *currentLocaleIdentifier = [[NSLocale currentLocale] localeIdentifier];
 		NSString *currentDeviceInfo = [NSString stringWithFormat:@"%@/%@; %@; %@;",[currentDevice model],[currentDevice systemVersion],[currentDevice systemName],currentLocaleIdentifier];
-		NSString *kDinnerBellUserAgentPrefix = [NSString stringWithFormat:@"%s%s%s %s%s","Appc","eler","ator","Tita","nium"];
-		userAgent = [[NSString stringWithFormat:@"%@/%s (%@)",kDinnerBellUserAgentPrefix,TI_VERSION_STR,currentDeviceInfo] retain];
+		NSString *kDinner_BellUserAgentPrefix = [NSString stringWithFormat:@"%s%s%s %s%s","Appc","eler","ator","Tita","nium"];
+		userAgent = [[NSString stringWithFormat:@"%@/%s (%@)",kDinner_BellUserAgentPrefix,TI_VERSION_STR,currentDeviceInfo] retain];
 	}
 	return userAgent;
 }
@@ -629,16 +722,13 @@ void MyUncaughtExceptionHandler(NSException *exception)
 
 -(void)beginBackgrounding
 {
-	if (runningServices == nil) {
-		runningServices = [[NSMutableArray alloc] initWithCapacity:[backgroundServices count]];
-	}
+	runningServices = [[NSMutableArray alloc] initWithCapacity:[backgroundServices count]];
 	
 	for (TiProxy *proxy in backgroundServices)
 	{
 		[runningServices addObject:proxy];
 		[proxy performSelector:@selector(beginBackground)];
 	}
-	[self checkBackgroundServices];
 }
 
 -(void)endBackgrounding
@@ -673,10 +763,24 @@ void MyUncaughtExceptionHandler(NSException *exception)
 	[backgroundServices addObject:proxy];
 }
 
--(void)checkBackgroundServices
+-(void)unregisterBackgroundService:(TiProxy*)proxy
 {
+	[backgroundServices removeObject:proxy];
+	if ([backgroundServices count]==0)
+	{
+		RELEASE_TO_NIL(backgroundServices);
+	}
+}
+
+-(void)stopBackgroundService:(TiProxy *)proxy
+{
+	[runningServices removeObject:proxy];
+	[backgroundServices removeObject:proxy];
+	
 	if ([runningServices count] == 0)
-	{		
+	{
+		RELEASE_TO_NIL(runningServices);
+		
 		// Synchronize the cleanup call on the main thread in case
 		// the expiration handler is fired at the same time.
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -687,19 +791,6 @@ void MyUncaughtExceptionHandler(NSException *exception)
 			}
 		});
 	}
-}
-
--(void)unregisterBackgroundService:(TiProxy*)proxy
-{
-	[backgroundServices removeObject:proxy];
-	[self checkBackgroundServices];
-}
-
--(void)stopBackgroundService:(TiProxy *)proxy
-{
-	[runningServices removeObject:proxy];
-	[backgroundServices removeObject:proxy];
-	[self checkBackgroundServices];
 }
 
 #endif

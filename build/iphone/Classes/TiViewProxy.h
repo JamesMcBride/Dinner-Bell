@@ -12,7 +12,7 @@
 
 @protocol TiKeyboardFocusableView
 
-#pragma mark Public DinnerBell APIs.
+#pragma mark Public Dinner_Bell APIs.
 - (void)focus:(id)args;
 - (void)blur:(id)args;
 

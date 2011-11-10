@@ -46,9 +46,7 @@ extern NSString * const TI_APPLICATION_RESOURCE_DIR;
 static NSDictionary* encodingMap = nil;
 static NSDictionary* typeMap = nil;
 static NSDictionary* sizeMap = nil;
-static NSString* kDeviceUUIDString = @"com.dinnerbell.uuid"; // don't obfuscate
-	
-#if 0
+
 static void getAddrInternal(char* macAddress, const char* ifName) {
     struct ifaddrs* addrs;
     if (!getifaddrs(&addrs)) {
@@ -73,7 +71,6 @@ static void getAddrInternal(char* macAddress, const char* ifName) {
         freeifaddrs(addrs);
     }    
 }
-#endif
 
 @implementation TiUtils
 
@@ -1264,7 +1261,7 @@ if ([str isEqualToString:@#orientation]) return orientation;
 	BOOL app = [[url scheme] hasPrefix:@"app"];
 	if ([url isFileURL] || app)
 	{
-		BOOL leadingSlashRemoved = NO;
+		BOOL had_splash_removed = NO;
 		NSString *urlstring = [[url standardizedURL] path];
 		NSString *resourceurl = [[NSBundle mainBundle] resourcePath];
 		NSRange range = [urlstring rangeOfString:resourceurl];
@@ -1275,11 +1272,11 @@ if ([str isEqualToString:@#orientation]) return orientation;
 		}
 		if ([appurlstr hasPrefix:@"/"])
 		{
-			leadingSlashRemoved = YES;
+			had_splash_removed = YES;
 			appurlstr = [appurlstr substringFromIndex:1];
 		}
 #if TARGET_IPHONE_SIMULATOR
-		if (app==YES && leadingSlashRemoved)
+		if (app==YES && had_splash_removed)
 		{
 			// on simulator we want to keep slash since it's coming from file
 			appurlstr = [@"/" stringByAppendingString:appurlstr];
@@ -1603,30 +1600,12 @@ if ([str isEqualToString:@#orientation]) return orientation;
 	return [self convertToHex:(unsigned char*)&result length:CC_MD5_DIGEST_LENGTH];    
 }
 
-+(NSString*)oldUUID
-{
-	NSString* result = nil;
-	UIDevice* currentDevice = [UIDevice currentDevice];
-	if ([currentDevice respondsToSelector:@selector(uniqueIdentifier)]) {
-		result = [currentDevice performSelector:@selector(uniqueIdentifier)];
-	}
-	return result;
-}
-
-#if 0
-+(NSString*)macmd5
++(NSString*)uniqueIdentifier
 {
     char addrString[18];
     getAddrInternal(&addrString[0],"en0");
-    NSString* dataString = [[[NSString alloc] initWithCString:addrString encoding:NSUTF8StringEncoding] autorelease];
+    NSString* dataString = [[[NSString alloc] initWithCString:addrString] autorelease];
     NSData* data = [dataString dataUsingEncoding:NSUTF8StringEncoding];
     return [TiUtils md5:data];
-}
-#endif
-
-+(NSString*)uniqueIdentifier
-{
-    NSString* uid = [TiUtils oldUUID];
-    return uid;
 }
 @end

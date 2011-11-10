@@ -1,0 +1,105 @@
+================================================================================
+Appcelerator Titanium Diagnostics Build Log
+The contents of this file are useful to send to Appcelerator Support if
+reporting an issue to help us understand your environment, build settings
+and aid in debugging. Please attach this log to any issue that you report.
+================================================================================
+
+Starting build at 11/10/11 12:27
+
+Build details:
+
+   timestamp=10/17/11 13:44
+   version=1.7.3
+   githash=dcf4257
+
+
+Script arguments:
+   /Users/developer/Library/Application Support/Titanium/mobilesdk/osx/1.7.3/iphone/builder.py
+   simulator
+   5.0
+   /Users/developer/Documents/Titanium Studio Workspace/Dinner-Bell
+   com.dinnerbell
+   Dinner-Bell
+   universal
+   iphone
+   
+
+Building from: /Users/developer/Library/Application Support/Titanium/mobilesdk/osx/1.7.3/iphone
+Platform: Darwin Kernel Version 11.2.0: Tue Aug  9 20:54:00 PDT 2011; root:xnu-1699.24.8~1/RELEASE_X86_64
+
+Xcode path is: /Developer
+
+
+githash=dcf4257, existing_git_hash=None
+forcing rebuild since libhash (None) not matching (b1b8b21fe7f2a50eabcaacbb1edebc4e)
+Performing full rebuild
+Generated the following stylecode code:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>classes</key>
+		<dict>
+</dict>
+
+		<key>classes_density</key>
+		<dict>
+</dict>
+
+		<key>ids</key>
+		<dict>
+</dict>
+
+		<key>ids_density</key>
+		<dict>
+</dict>
+
+		<key>tags</key>
+		<dict>
+</dict>
+
+		<key>tags_density</key>
+		<dict>
+</dict>
+
+	</dict>
+</plist>
+Starting Xcode compile with the following arguments:
+
+    xcodebuild
+    -target
+    Dinner-Bell-universal
+    -configuration
+    Debug
+    -sdk
+    iphonesimulator5.0
+    GCC_PREPROCESSOR_DEFINITIONS=__LOG__ID__=a7a07d22-1cd2-44a3-a3b9-141af8058a8b DEPLOYTYPE=development TI_DEVELOPMENT=1 DEBUG=1 TI_VERSION=1.7.3 
+    IPHONEOS_DEPLOYMENT_TARGET=3.1
+    TARGETED_DEVICE_FAMILY=1,2
+    VALID_ARCHS=armv6 armv7 i386
+
+app_id = com.dinnerbell
+
+
+Build settings from command line:
+    GCC_PREPROCESSOR_DEFINITIONS = __LOG__ID__=a7a07d22-1cd2-44a3-a3b9-141af8058a8b DEPLOYTYPE=development TI_DEVELOPMENT=1 DEBUG=1 TI_VERSION=1.7.3 
+    IPHONEOS_DEPLOYMENT_TARGET = 3.1
+    SDKROOT = iphonesimulator5.0
+    TARGETED_DEVICE_FAMILY = 1,2
+    VALID_ARCHS = armv6 armv7 i386
+
+xcodebuild: error: The directory /Users/developer/Documents/Titanium Studio Workspace/Dinner-Bell/build/iphone contains 2 projects, including multiple projects with the current extension (.xcodeproj). Specify the project to use with the -project option.
+
+EXIT CODE WAS: 78
+
+Exception detected in script:
+Traceback (most recent call last):
+  File "/Users/developer/Library/Application Support/Titanium/mobilesdk/osx/1.7.3/iphone/builder.py", line 1148, in main
+    execute_xcode("iphonesimulator%s" % link_version,["GCC_PREPROCESSOR_DEFINITIONS=__LOG__ID__=%s DEPLOYTYPE=development TI_DEVELOPMENT=1 DEBUG=1 TI_VERSION=%s %s" % (log_id,sdk_version,debugstr)],False)
+  File "/Users/developer/Library/Application Support/Titanium/mobilesdk/osx/1.7.3/iphone/builder.py", line 1066, in execute_xcode
+    output = run.run(args,False,False,o)
+  File "/Users/developer/Library/Application Support/Titanium/mobilesdk/osx/1.7.3/iphone/run.py", line 39, in run
+    sys.exit(rc)
+SystemExit: 78

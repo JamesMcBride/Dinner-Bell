@@ -540,10 +540,10 @@ bool KrollSetProperty(TiContextRef jsContext, TiObjectRef object, TiStringRef pr
 
 // forward declare these
 
-//@interface DinnerBellObject : NSObject
+//@interface Dinner_BellObject : NSObject
 //@end
 
-@interface DinnerBellObject (Private)
+@interface Dinner_BellObject (Private)
 -(NSDictionary*)modules;
 @end
 
@@ -561,9 +561,9 @@ void KrollPropertyNames(TiContextRef ctx, TiObjectRef object, TiPropertyNameAccu
 	{
 		id target = [o target];
 		
-		if ([o isKindOfClass:[DinnerBellObject class]])
+		if ([o isKindOfClass:[Dinner_BellObject class]])
 		{
-			for (NSString *key in [[(DinnerBellObject*)o modules] allKeys])
+			for (NSString *key in [[(Dinner_BellObject*)o modules] allKeys])
 			{
 				TiStringRef value = TiStringCreateWithUTF8CString([key UTF8String]);
 				TiPropertyNameAccumulatorAddName(propertyNames,value);

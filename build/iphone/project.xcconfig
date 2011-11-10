@@ -1,4 +1,4 @@
-TI_VERSION=1.7.5
+TI_VERSION=1.7.3
 TI_SDK_DIR=/Users/developer/Library/Application Support/Titanium/mobilesdk/osx/$(TI_VERSION)/iphone
 TI_APPID=com.dinnerbell
 OTHER_LDFLAGS[sdk=iphoneos*]=$(inherited) -weak_framework iAd

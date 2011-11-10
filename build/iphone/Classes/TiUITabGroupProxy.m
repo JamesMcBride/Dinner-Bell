@@ -225,10 +225,7 @@
 	int blessedController = [tabController selectedIndex];
 	if (blessedController != NSNotFound)
 	{
-		TiOrientationFlags result = [[tabs objectAtIndex:blessedController] orientationFlags];
-		if (result != TiOrientationNone) {
-			return result;
-		}
+		return [[tabs objectAtIndex:blessedController] orientationFlags];
 	}
 	return [super orientationFlags];
 }

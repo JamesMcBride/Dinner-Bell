@@ -21,7 +21,7 @@
 
 extern BOOL const TI_APPLICATION_ANALYTICS;
 
-@implementation DinnerBellObject
+@implementation Dinner_BellObject
 
 -(NSDictionary*)modules
 {
@@ -280,7 +280,7 @@ CFMutableSetRef	krollBridgeRegistry = nil;
 	[self removeProxies];
 	RELEASE_TO_NIL(preload);
 	RELEASE_TO_NIL(context);
-	RELEASE_TO_NIL(_dinnerbell);
+	RELEASE_TO_NIL(_dinner_bell);
 	RELEASE_TO_NIL(modules);
 	RELEASE_TO_NIL(proxyLock);
 	OSSpinLockLock(&krollBridgeRegistryLock);
@@ -473,7 +473,7 @@ CFMutableSetRef	krollBridgeRegistry = nil;
 
 -(void)injectPatches
 {
-	// called to inject any DinnerBell patches in JS before a context is loaded... nice for 
+	// called to inject any Dinner_Bell patches in JS before a context is loaded... nice for 
 	// setting up backwards compat type APIs
 	
 	NSMutableString *js = [[NSMutableString alloc] init];
@@ -510,7 +510,7 @@ CFMutableSetRef	krollBridgeRegistry = nil;
 -(void)gc
 {
 	[context gc];
-	[_dinnerbell gc];
+	[_dinner_bell gc];
 }
 
 #pragma mark Delegate
@@ -522,15 +522,15 @@ CFMutableSetRef	krollBridgeRegistry = nil;
 
 -(void)didStartNewContext:(KrollContext*)kroll
 {
-	// create DinnerBell global object
+	// create Dinner_Bell global object
 	NSString *basePath = (url==nil) ? [TiHost resourcePath] : [[[url path] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"."];
-	_dinnerbell = [[DinnerBellObject alloc] initWithContext:kroll host:host context:self baseURL:[NSURL fileURLWithPath:basePath]];
+	_dinner_bell = [[Dinner_BellObject alloc] initWithContext:kroll host:host context:self baseURL:[NSURL fileURLWithPath:basePath]];
 	
 	TiContextRef jsContext = [kroll context];
-	TiValueRef tiRef = [KrollObject toValue:kroll value:_dinnerbell];
+	TiValueRef tiRef = [KrollObject toValue:kroll value:_dinner_bell];
 	
-	NSString *_dinnerbellNS = [NSString stringWithFormat:@"T%sanium","it"];
-	TiStringRef prop = TiStringCreateWithCFString((CFStringRef) _dinnerbellNS);
+	NSString *_dinner_bellNS = [NSString stringWithFormat:@"T%sanium","it"];
+	TiStringRef prop = TiStringCreateWithCFString((CFStringRef) _dinner_bellNS);
 	TiStringRef prop2 = TiStringCreateWithCFString((CFStringRef) [NSString stringWithFormat:@"%si","T"]);
 	TiObjectRef globalRef = TiContextGetGlobalObject(jsContext);
 	TiObjectSetProperty(jsContext, globalRef, prop, tiRef, NULL, NULL);
@@ -543,7 +543,7 @@ CFMutableSetRef	krollBridgeRegistry = nil;
 	{
 		for (NSString *name in preload)
 		{
-			KrollObject *ti = (KrollObject*)[_dinnerbell valueForKey:name];
+			KrollObject *ti = (KrollObject*)[_dinner_bell valueForKey:name];
 			NSDictionary *values = [preload valueForKey:name];
 			for (id key in values)
 			{
@@ -579,7 +579,7 @@ CFMutableSetRef	krollBridgeRegistry = nil;
 		NSNotification *notification = [NSNotification notificationWithName:kTiContextShutdownNotification object:self];
 		[[NSNotificationCenter defaultCenter] postNotification:notification];
 	}
-	[_dinnerbell gc];
+	[_dinner_bell gc];
 	
 	if (shutdownCondition)
 	{
@@ -594,7 +594,7 @@ CFMutableSetRef	krollBridgeRegistry = nil;
 {
 	[self performSelectorOnMainThread:@selector(unregisterForMemoryWarning) withObject:nil waitUntilDone:NO];
 	[self removeProxies];
-	RELEASE_TO_NIL(_dinnerbell);
+	RELEASE_TO_NIL(_dinner_bell);
 	RELEASE_TO_NIL(context);
 	RELEASE_TO_NIL(preload);
 	RELEASE_TO_NIL(modules);
@@ -799,7 +799,7 @@ CFMutableSetRef	krollBridgeRegistry = nil;
 		return module;
 	}
 	
-	@throw [NSException exceptionWithName:@"org.dinnerbell.kroll" reason:[NSString stringWithFormat:@"Couldn't find module: %@",path] userInfo:nil];
+	@throw [NSException exceptionWithName:@"org.dinner_bell.kroll" reason:[NSString stringWithFormat:@"Couldn't find module: %@",path] userInfo:nil];
 }
 
 + (int)countOfKrollBridgesUsingProxy:(id)proxy

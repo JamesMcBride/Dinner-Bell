@@ -52,7 +52,7 @@ extern "C" {
 	#define KMETHOD_DEBUG MEMORY_DEBUG
 #endif
 
-// in simulator we redefine to format for DinnerBell Developer console
+// in simulator we redefine to format for Dinner_Bell Developer console
 
 
 #define TI_INLINE static __inline__
@@ -286,7 +286,7 @@ if ((__x<__minX) || (__x>__maxX)) \
 #define DEFINE_EXCEPTIONS \
 - (void) throwException:(NSString *) reason subreason:(NSString*)subreason location:(NSString *)location\
 {\
-	NSString * exceptionName = [@"org.dinnerbell." stringByAppendingString:NSStringFromClass([self class])];\
+	NSString * exceptionName = [@"org.dinner_bell." stringByAppendingString:NSStringFromClass([self class])];\
 	NSString * message = [NSString stringWithFormat:@"%@. %@ %@",reason,(subreason!=nil?subreason:@""),(location!=nil?location:@"")];\
 	NSLog(@"[ERROR] %@",message);\
 	if ([NSThread isMainThread]==NO) {\
@@ -296,7 +296,7 @@ if ((__x<__minX) || (__x>__maxX)) \
 \
 + (void) throwException:(NSString *) reason subreason:(NSString*)subreason location:(NSString *)location\
 {\
-	NSString * exceptionName = @"org.dinnerbell";\
+	NSString * exceptionName = @"org.dinner_bell";\
 	NSString * message = [NSString stringWithFormat:@"%@. %@ %@",reason,(subreason!=nil?subreason:@""),(location!=nil?location:@"")];\
 	NSLog(@"[ERROR] %@",message);\
 	if ([NSThread isMainThread]==NO) {\
@@ -370,28 +370,28 @@ return map;\
 
  //MUST BE NEGATIVE, as it inhabits the same space as UIBarButtonSystemItem
 enum {
-	UIDinnerBellNativeItemNone = -1, 
-	UIDinnerBellNativeItemSpinner = -2,
-	UIDinnerBellNativeItemProgressBar = -3,
+	UIDinner_BellNativeItemNone = -1, 
+	UIDinner_BellNativeItemSpinner = -2,
+	UIDinner_BellNativeItemProgressBar = -3,
 	
-	UIDinnerBellNativeItemSlider = -4,
-	UIDinnerBellNativeItemSwitch = -5,
-	UIDinnerBellNativeItemMultiButton = -6,
-	UIDinnerBellNativeItemSegmented = -7,
+	UIDinner_BellNativeItemSlider = -4,
+	UIDinner_BellNativeItemSwitch = -5,
+	UIDinner_BellNativeItemMultiButton = -6,
+	UIDinner_BellNativeItemSegmented = -7,
 	
-	UIDinnerBellNativeItemTextView = -8,
-	UIDinnerBellNativeItemTextField = -9,
-	UIDinnerBellNativeItemSearchBar = -10,
+	UIDinner_BellNativeItemTextView = -8,
+	UIDinner_BellNativeItemTextField = -9,
+	UIDinner_BellNativeItemSearchBar = -10,
 	
-	UIDinnerBellNativeItemPicker = -11,
-	UIDinnerBellNativeItemDatePicker = -12,
+	UIDinner_BellNativeItemPicker = -11,
+	UIDinner_BellNativeItemDatePicker = -12,
 	
-	UIDinnerBellNativeItemInfoLight = -13,
-	UIDinnerBellNativeItemInfoDark = -14,
+	UIDinner_BellNativeItemInfoLight = -13,
+	UIDinner_BellNativeItemInfoDark = -14,
 	
-	UIDinnerBellNativeItemDisclosure = -15,
+	UIDinner_BellNativeItemDisclosure = -15,
 	
-	UIDinnerBellNativeItemContactAdd = -16
+	UIDinner_BellNativeItemContactAdd = -16
 };
 
 

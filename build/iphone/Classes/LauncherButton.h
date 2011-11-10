@@ -9,9 +9,9 @@
 
 
 // A good bit of this code was derived from the Three20 project
-// and was customized to work inside DinnerBell
+// and was customized to work inside Dinner_Bell
 //
-// All modifications by DinnerBell are licensed under 
+// All modifications by Dinner_Bell are licensed under 
 // the Apache License, Version 2.0
 //
 //

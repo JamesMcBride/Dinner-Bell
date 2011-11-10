@@ -1,5 +1,5 @@
 //
-// these are dynamic defines used by the DinnerBell JS compiler
+// these are dynamic defines used by the Dinner_Bell JS compiler
 //
 // when compiling in a real project these are dynamically generated
 // these defined here mainly for when running inside xcode

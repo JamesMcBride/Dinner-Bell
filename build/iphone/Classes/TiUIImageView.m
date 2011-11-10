@@ -436,7 +436,7 @@ DEFINE_EXCEPTIONS
 		if (image==nil)
 		{
 			// use a placeholder image - which the dev can specify with the
-			// defaultImage property or we'll provide the DinnerBell stock one
+			// defaultImage property or we'll provide the Dinner_Bell stock one
 			// if not specified
 			NSURL *defURL = [TiUtils toURL:[self.proxy valueForKey:@"defaultImage"] proxy:self.proxy];
 			

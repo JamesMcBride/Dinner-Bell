@@ -115,6 +115,7 @@ TiOrientationFlags TiOrientationFlagsFromObject(id args)
 
 -(void)_configure
 {	
+    orientationFlags = [[[TiApp app] controller] allowedOrientations];
 	[self replaceValue:nil forKey:@"orientationModes" notification:NO];
 	[super _configure];
 }
@@ -400,7 +401,7 @@ END_UI_THREAD_PROTECTED_VALUE(opened)
 {
 	navWindow = NO;
 	BOOL rootViewAttached = [self isRootViewAttached];
-	[self parentWillShow];
+	
 	// give it to our subclass. he'll either return true to continue with open state and animation or 
 	// false to delay for some other action
 	if ([self _handleOpen:args])
@@ -421,7 +422,7 @@ END_UI_THREAD_PROTECTED_VALUE(opened)
 			if ([openAnimation isTransitionAnimation])
 			{
 				transitionAnimation = [[openAnimation transition] intValue];
-				startingTransitionAnimation = [[TiApp controller] defaultImageView] != nil;
+				splashTransitionAnimation = [[TiApp app] isSplashVisible];
 			}
 			openAnimation.delegate = self;
 			[openAnimation animate:self];
@@ -619,8 +620,12 @@ END_UI_THREAD_PROTECTED_VALUE(opened)
 			{
 				UIView *rootView = [[TiApp app] controller].view;
 				transitionAnimation = [[closeAnimation transition] intValue];
-				startingTransitionAnimation = [[rootView subviews] count]<=1 && modalFlag==NO;
-				if (!startingTransitionAnimation)
+				splashTransitionAnimation = [[rootView subviews] count]<=1 && modalFlag==NO;
+				if (splashTransitionAnimation)
+				{
+					[[TiApp app] attachSplash];
+				}
+				else
 				{
 					RELEASE_TO_NIL(reattachWindows);
 					if ([[rootView subviews] count] > 0)
@@ -694,7 +699,7 @@ END_UI_THREAD_PROTECTED_VALUE(opened)
 	[rootView bringSubviewToFront:view_];
 
 	// make sure the splash is gone
-	[[TiApp controller] dismissDefaultImageView];
+	[[TiApp app] hideSplash:nil];
 }
 
 -(NSNumber*)focused
@@ -715,6 +720,11 @@ END_UI_THREAD_PROTECTED_VALUE(opened)
 	focused = newFocused;
 }
 
+-(BOOL)allowsOrientation:(UIInterfaceOrientation)orientation
+{
+    return TI_ORIENTATION_ALLOWED(orientationFlags, orientation);
+}
+
 -(void)ignoringRotationToOrientation:(UIInterfaceOrientation)orientation
 {
     // For subclasses
@@ -728,15 +738,7 @@ END_UI_THREAD_PROTECTED_VALUE(opened)
 			childOrientationControllerChangedFlags:self];
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
-	[self parentWillShow];
-}
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[self parentWillHide];
-}
 
 -(BOOL)animationShouldTransition:(id)sender
 {
@@ -747,10 +749,11 @@ END_UI_THREAD_PROTECTED_VALUE(opened)
 	
 	if (opening)
 	{
-		if (startingTransitionAnimation)
+		if (splashTransitionAnimation)
 		{
-			startingTransitionAnimation=NO;
-			[[TiApp controller] dismissDefaultImageView];
+			splashTransitionAnimation=NO;
+			UIView *splashView = [[TiApp app] splash];
+			[splashView removeFromSuperview];
 		}
 		else
 		{
@@ -791,15 +794,18 @@ END_UI_THREAD_PROTECTED_VALUE(opened)
 //	[self rememberProxy:sender];
 	if (opening)
 	{
-		if (startingTransitionAnimation==NO)
+		if (splashTransitionAnimation==NO)
 		{
-			[[[TiApp controller] defaultImageView] setAlpha:0.0];
+			if ([[TiApp app] isSplashVisible])
+			{
+				[[TiApp app] splash].alpha = 0;
+			}	
 			[self attachViewToTopLevelWindow];
 		}
 	}
 	else
 	{
-		if (startingTransitionAnimation)
+		if (splashTransitionAnimation)
 		{
 			[self detachView];
 		}

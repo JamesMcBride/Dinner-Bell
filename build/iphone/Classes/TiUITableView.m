@@ -932,7 +932,7 @@
 		}
 	}
 	
-    // Since the header proxy is not properly attached to a view proxy in the _dinnerbell
+    // Since the header proxy is not properly attached to a view proxy in the _dinner_bell
     // system, we have to reposition it here.  Resetting the table header view
     // is because there's a charming bug in UITableView that doesn't respect redisplay
     // for headers/footers when the frame changes.

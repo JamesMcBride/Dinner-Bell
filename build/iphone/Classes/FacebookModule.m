@@ -1,6 +1,6 @@
 /**
  * Appcelerator Titanium Mobile
- * Copyright (c) 2009-2011 by DinnerBell, Inc. All Rights Reserved.
+ * Copyright (c) 2009-2011 by Dinner_Bell, Inc. All Rights Reserved.
  * Licensed under the terms of the Apache Public License
  * Please see the LICENSE included with this distribution for details.
  * 
@@ -82,10 +82,8 @@
 	RELEASE_TO_NIL(appid);
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSString *uid_ = [defaults objectForKey:@"FBUserId"];
-	appid = [[defaults stringForKey:@"FBAppId"] copy];
-	facebook = [[Facebook alloc] initWithAppId:appid urlSchemeSuffix:nil andDelegate:self];
-
 	VerboseLog(@"[DEBUG] facebook _restore, uid = %@",uid_);
+	facebook = [[Facebook alloc] init];
 	if (uid_) 
 	{
 		NSDate* expirationDate = [defaults objectForKey:@"FBSessionExpires"];
@@ -95,6 +93,7 @@
 			facebook.accessToken = [defaults stringForKey:@"FBAccessToken"];
 			facebook.expirationDate = expirationDate;
 			loggedIn = YES;
+			appid = [[defaults stringForKey:@"FBAppId"] copy];
 			[self performSelector:@selector(fbDidLogin)];
 		}
 	}
@@ -321,7 +320,6 @@
 {
 	RELEASE_TO_NIL(appid);
 	appid = [arg copy];
-	[facebook setAppId:appid];
 }
 
 /**
@@ -398,8 +396,7 @@
 	[self _unsave];
 	
 	NSArray *permissions_ = permissions == nil ? [NSArray array] : permissions;
-	[facebook setForceDialog:forceDialogAuth];
-	[facebook authorize:permissions_];
+	[facebook authorize:appid permissions:permissions_ forceDialog:forceDialogAuth delegate:self];
 }
 
 /**

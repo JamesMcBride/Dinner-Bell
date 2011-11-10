@@ -16,7 +16,7 @@
 #import "KrollObject.h"
 #import "TiModule.h"
 
-@interface DinnerBellObject : KrollObject {
+@interface Dinner_BellObject : KrollObject {
 @private
 	NSMutableDictionary *modules;
 	TiHost *host;
@@ -37,7 +37,7 @@
 	KrollContext *context;
 	NSDictionary *preload;
 	NSMutableDictionary *modules;
-	DinnerBellObject *_dinnerbell;
+	Dinner_BellObject *_dinner_bell;
 	BOOL shutdown;
     BOOL evaluationError;
 	NSMutableArray *proxies;
